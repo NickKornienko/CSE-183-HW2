@@ -25,16 +25,30 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
+import json
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
+from .settings import APP_FOLDER
+import os
 
 url_signer = URLSigner(session)
+
 
 @action('index')
 @action.uses('index.html', db, auth)
 def index():
-    ### You have to modify the code here as well.
-    return dict()
+    JSON_FILE = os.path.join(APP_FOLDER, "data", "table.json")
+    file = open(JSON_FILE, "r")
+    rows = json.load(file)
+
+    headerNames = ['Bird Species', 'Weight', 'Diet', 'Habitat']
+
+    headers = ['bird', 'weight', 'diet', 'habitat']
+    return dict(
+        headerNames=headerNames,
+        headers=headers,
+        rows=rows
+    )
